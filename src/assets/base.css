@@ -1,6 +1,9 @@
 :root {
   --foreground-color: red;
   --background-color: green;
+
+  --font-ui: "Imprima", Helvetica, Arial, sans-serif;
+  --font-logo: "Indie Flower", cursive;
 }
 body {
   margin: 0;
