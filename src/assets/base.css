@@ -4,6 +4,7 @@
 
   --font-ui: "Imprima", Helvetica, Arial, sans-serif;
   --font-logo: "Indie Flower", cursive;
+  --color-logo: rgba(227, 92, 74, 0.79);
 }
 body {
   margin: 0;

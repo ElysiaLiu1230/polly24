@@ -16,3 +16,12 @@
     rgba(0, 119, 255, 0.21) 100%
   );
 }
+
+.logo {
+  font-family: var(--font-logo);
+  color: var(--color-logo);
+
+  font-size: 3.0rem;
+  letter-spacing: 1px;
+  line-height: 1;
+}
