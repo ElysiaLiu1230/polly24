@@ -1,4 +1,6 @@
 <template>
+  
+  <div class="page">
   <header>
     <div v-bind:class="['hamburger', {'close': !hideNav}]" 
          v-on:click="toggleNav">
@@ -30,6 +32,7 @@
   <router-link v-bind:to="'/lobby/' + newPollId">
     {{ uiLabels.participatePoll }}
   </router-link>
+  </div>
 </template>
 
 <script>
@@ -72,8 +75,16 @@ export default {
 }
 </script>
 <style scoped>
+  .page {
+  min-height: 100vh;
+  background-color: #f7f7fb;
+  background-image: linear-gradient(
+    180deg,
+    rgba(123, 44, 191, 0) 0%,
+    rgba(0, 119, 255, 0.21) 100%
+  );
+}
   header {
-    background-color: gray;
     width: 100%;
     display: grid;
     grid-template-columns: 2em auto;
