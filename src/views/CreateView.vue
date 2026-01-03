@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page">
     Poll link: 
     <input type="text" v-model="pollId">
     <button v-on:click="createPoll">
