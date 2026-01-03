@@ -78,7 +78,7 @@ export default {
 .topbar {
   width: 100%;
   display: grid;
-  grid-template-columns: 3.0rem auto 1fr; /* ☰ | logo | nav */
+  grid-template-columns: 3.0rem auto 1fr; 
   align-items: center;
   column-gap: 24px;
   padding: 0px 0px;
@@ -88,7 +88,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 28px;
-  margin: 0;  /* 防止 nav 默认 margin 干扰 */
+  margin: 0;
 }
 
 
