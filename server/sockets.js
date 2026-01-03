@@ -22,7 +22,9 @@ function sockets(io, socket, data) {
 
   socket.on('participateInPoll', function(d) {
     data.participateInPoll(d.pollId, d.name);
-    io.to(d.pollId).emit('participantsUpdate', data.getParticipants(d.pollId));
+    // io.to(d.pollId).emit('participantsUpdate', data.getParticipants(d.pollId));
+    const participantNames = dataStore.polls[data.pollId].participants.map(p => p.name);
+    io.to(data.pollId).emit("participantsUpdate", participantNames);
   });
   socket.on('startPoll', function(pollId) {
     io.to(pollId).emit('startPoll');
