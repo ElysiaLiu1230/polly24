@@ -10,8 +10,11 @@
       <ResponsiveNav :hideNav="hideNav" class="navDesktop">
         <a href="#" @click.prevent="switchLanguage">{{ uiLabels.changeLanguage }}</a>
         <router-link to="/create/">{{ uiLabels.createPoll }}</router-link>
-        <a href="">{{ uiLabels.about }}</a>
-        <a href="">FAQ</a>
+        <a href="">{{ uiLabels.business }}</a>
+        <a href="">{{ uiLabels.pricing }}</a>
+        <a href="">{{ uiLabels.enterprise }}</a>
+        <a href="">{{ uiLabels.products }}</a>
+        <a href="">{{ uiLabels.career }}</a>
       </ResponsiveNav>
 
       <div class="right">
