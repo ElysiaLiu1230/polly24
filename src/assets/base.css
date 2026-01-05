@@ -6,7 +6,9 @@
   --font-logo: "Indie Flower", cursive;
   --color-logo: rgba(227, 92, 74, 0.79);
 }
-body {
+html, body {
   margin: 0;
   padding: 0;
+  height: auto;
+  overflow-y: auto;
 }
