@@ -11,7 +11,7 @@
         <button class="btn ghost" @click="createPoll">Create</button>
       </div>
 
-      <!-- Top-right: ONLY Run poll -->
+      <!-- Run poll -->
       <div class="actions">
         <button class="btn primary" @click="startPoll">Run poll</button>
       </div>
@@ -79,7 +79,6 @@
             </div>
           </div>
 
-          <!-- (Removed the bottom-right "Add question" button from editor) -->
         </div>
       </section>
 
@@ -125,7 +124,6 @@
           </label>
         </div>
 
-        <!-- (Removed pollData debug box) -->
       </aside>
     </main>
   </div>
@@ -143,7 +141,7 @@ function newLocalQuestion() {
     timerEnabled: true,
     timerSeconds: 20,
     points: 1,
-    hidden: false, // you said: invisible while running (server must respect it later)
+    hidden: false, 
   };
 }
 
@@ -193,7 +191,7 @@ export default {
       socket.emit("joinPoll", this.pollId);
     },
 
-    // Run poll (same as your old startPoll)
+    // Run poll 
     startPoll() {
       socket.emit("startPoll", this.pollId);
     },
