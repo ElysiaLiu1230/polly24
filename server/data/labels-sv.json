@@ -27,5 +27,6 @@
 	"featureRealtimeResults": "Resultat i realtid",
 	"featureEasyJoinPIN": "Enkelt att ansluta med PIN",
 	"featureMobileFriendly": "Mobilvänlig",
-	"featureNoInstall": "Ingen installation krävs"
+	"featureNoInstall": "Ingen installation krävs",
+	"profile": "Profil"
 }

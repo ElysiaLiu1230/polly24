@@ -25,5 +25,6 @@
 	"featureRealtimeResults": "Real-time results",
 	"featureEasyJoinPIN": "Easy to join with PIN",
 	"featureMobileFriendly": "Mobile friendly",
-	"featureNoInstall": "No installation required"
+	"featureNoInstall": "No installation required",
+	"profile": "Profile"
 }

@@ -9,7 +9,6 @@
       <!-- web: nav in the middle -->
       <ResponsiveNav :hideNav="hideNav" class="navDesktop">
         <a href="#" @click.prevent="switchLanguage">{{ uiLabels.changeLanguage }}</a>
-        <router-link to="/create/">{{ uiLabels.createPoll }}</router-link>
         <a href="">{{ uiLabels.business }}</a>
         <a href="">{{ uiLabels.pricing }}</a>
         <a href="">{{ uiLabels.enterprise }}</a>
@@ -30,18 +29,65 @@
 
       <ResponsiveNav :hideNav="hideNav" class="navMobile">
         <a href="#" @click.prevent="switchLanguage">{{ uiLabels.changeLanguage }}</a>
-        <router-link to="/create/">{{ uiLabels.createPoll }}</router-link>
-        <a href="">{{ uiLabels.about }}</a>
-        <a href="">FAQ</a>
-
-        <button class="iconBtn avatarMobile" aria-label="Profile">
-          <span class="dot"></span>
-        </button>
+        <a href="">{{ uiLabels.business }}</a>
+        <a href="">{{ uiLabels.pricing }}</a>
+        <a href="">{{ uiLabels.enterprise }}</a>
+        <a href="">{{ uiLabels.products }}</a>
+        <a href="">{{ uiLabels.career }}</a>
+        <a href="">{{ uiLabels.profile }}</a>
       </ResponsiveNav>
     </div>
-
+    <!-- 
     <h1>{{ uiLabels["sales-pitch"] }}</h1>
-    <h2>{{ uiLabels.subHeading }}</h2>
+    <h2>{{ uiLabels.subHeading }}</h2> -->
+    <section class="hero">
+      <!-- left:img -->
+      <div class="hero-visual">
+        <img src="/img/mobile.png" alt="Easy Poll mobile preview" />
+      </div>
+
+      <!-- right：description + buttons -->
+      <div class="hero-content">
+        <p class="hero-description">
+          {{ uiLabels.description }}
+        </p>
+
+        <div class="hero-actions">
+          <router-link to="/create" class="btn primary">
+            {{ uiLabels.createPoll }}
+          </router-link>
+
+          <button class="btn secondary">
+            {{ uiLabels.participatePoll }}
+          </button>
+        </div>
+      </div>
+    </section>
+    <section class="features">
+      <h3 class="features-title">
+        {{ uiLabels.whyTitle }}
+      </h3>
+
+      <div class="features-grid">
+        <ul>
+          <li>{{ uiLabels.featureLivePolls }}</li>
+          <li>{{ uiLabels.featureWordClouds }}</li>
+          <li>{{ uiLabels.featureWorksAnyDevice }}</li>
+        </ul>
+
+        <ul>
+          <li>{{ uiLabels.featureMultipleChoice }}</li>
+          <li>{{ uiLabels.featureQAVoting }}</li>
+          <li>{{ uiLabels.featureRealtimeResults }}</li>
+        </ul>
+
+        <ul>
+          <li>{{ uiLabels.featureEasyJoinPIN }}</li>
+          <li>{{ uiLabels.featureMobileFriendly }}</li>
+          <li>{{ uiLabels.featureNoInstall }}</li>
+        </ul>
+      </div>
+    </section>
 
     <label>
       Write poll id:
@@ -167,12 +213,15 @@ export default {
 .navMobile {
   display: none;
 }
+
 .avatarMobile {
   display: none;
 }
+
 .navOverlay {
   display: none;
 }
+
 /* desktop for mobile */
 @media screen and (max-width: 50em) {
 
@@ -232,7 +281,7 @@ export default {
     color: inherit;
   }
 
-    /* overlay for drawer */
+  /* overlay for drawer */
   .navOverlay {
     display: block;
     position: fixed;
@@ -258,9 +307,111 @@ export default {
     padding: 0.9rem 1rem;
     justify-content: flex-start;
   }
+}
 
-  .navMobile .avatarMobile::after {
-    content: "Profile";
+.hero {
+  max-width: 1100px;
+  margin: 4rem auto 6rem;
+  padding: 0 2rem;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.hero-visual img {
+  width: 100%;
+  max-width: 420px;
+  display: block;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.hero-description {
+  font-family: var(--font-ui);
+  font-size: 1.25rem;
+  line-height: 1.6;
+  color: #111;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.btn {
+  font-family: var(--font-ui);
+  font-size: 1.5rem;
+  padding: 0.75rem 2rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn.primary {
+  background: #8fe3b0;
+  color: #fff;
+}
+
+.btn.secondary {
+  background: #8ecae6;
+  color: #fff;
+}
+
+@media (max-width: 50em) {
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
   }
+
+  .hero-actions {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .hero-visual img {
+    margin: 0 auto;
+  }
+}
+
+.features {
+  max-width: 1100px;
+  margin: 0 auto 4rem;
+  padding: 0 2rem;
+}
+
+.features-title {
+  font-family: var(--font-ui);
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
+  color: #444;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+}
+
+.features ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.features li {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  color: #4f6bdc;
+  margin-bottom: 0.75rem;
 }
 </style>
