@@ -124,6 +124,67 @@ Data.prototype.submitAnswer = function(pollId, answer) {
   }
 }
 
+Data.prototype.submitParticipantAnswer = function(pollId, participantName, answer) {
+  if (this.pollExists(pollId)) {
+    const poll = this.polls[pollId];
+    const participant = poll.participants.find(p => p.name === participantName);
+    
+    if (participant) {
+      participant.answers[poll.currentQuestion] = answer;
+    }
+    
+    let answers = poll.answers[poll.currentQuestion];
+    if (typeof answers !== 'object') {
+      answers = {};
+      answers[answer] = 1;
+      poll.answers.push(answers);
+    } else if (typeof answers[answer] === 'undefined') {
+      answers[answer] = 1;
+    } else {
+      answers[answer] += 1;
+    }
+    console.log("participant answer submitted", participantName, answer);
+  }
+}
+
+Data.prototype.setCorrectAnswer = function(pollId, questionIndex, correctAnswer) {
+  if (this.pollExists(pollId)) {
+    const poll = this.polls[pollId];
+    if (poll.questions[questionIndex]) {
+      poll.questions[questionIndex].correct = correctAnswer;
+      console.log("correct answer set for question", questionIndex, correctAnswer);
+    }
+  }
+}
+
+Data.prototype.calculateParticipantScore = function(pollId, participant) {
+  if (!this.pollExists(pollId)) return 0;
+  
+  const poll = this.polls[pollId];
+  let score = 0;
+  
+  participant.answers.forEach((answer, questionIndex) => {
+    const question = poll.questions[questionIndex];
+    if (question && question.correct === answer) {
+      score += 100; 
+    }
+  });
+  
+  return score;
+}
+
+Data.prototype.getParticipantsWithScores = function(pollId) {
+  if (!this.pollExists(pollId)) return [];
+  
+  const poll = this.polls[pollId];
+  
+  return poll.participants.map(participant => ({
+    name: participant.name,
+    score: this.calculateParticipantScore(pollId, participant),
+    answers: participant.answers
+  }));
+}
+
 export { Data };
 
 

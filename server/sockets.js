@@ -22,9 +22,7 @@ function sockets(io, socket, data) {
 
   socket.on('participateInPoll', function(d) {
     data.participateInPoll(d.pollId, d.name);
-    // io.to(d.pollId).emit('participantsUpdate', data.getParticipants(d.pollId));
-    const participantNames = dataStore.polls[data.pollId].participants.map(p => p.name);
-    io.to(data.pollId).emit("participantsUpdate", participantNames);
+    io.to(d.pollId).emit('participantsUpdate', data.getParticipants(d.pollId));
   });
   socket.on('startPoll', function(pollId) {
     io.to(pollId).emit('startPoll');
@@ -36,9 +34,17 @@ function sockets(io, socket, data) {
   });
 
   socket.on('submitAnswer', function(d) {
-    data.submitAnswer(d.pollId, d.answer);
+    data.submitParticipantAnswer(d.pollId, d.participantName, d.answer);
     io.to(d.pollId).emit('submittedAnswersUpdate', data.getSubmittedAnswers(d.pollId));
-  }); 
+    
+    const participants = data.getParticipantsWithScores(d.pollId);
+    io.to(d.pollId).emit('participantsScoreUpdate', participants);
+  });
+
+  socket.on('getParticipantsScores', function(pollId) {
+    const participants = data.getParticipantsWithScores(pollId);
+    socket.emit('participantsScoreUpdate', participants);
+  });
 }
 
 export { sockets };

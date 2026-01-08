@@ -158,7 +158,12 @@ export default {
 <style scoped>
 .lobby-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #f7f7fb;
+  background-image: linear-gradient(
+    180deg,
+    rgba(123, 44, 191, 0) 0%,
+    rgba(0, 119, 255, 0.21) 100%
+  );
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -184,7 +189,7 @@ export default {
   background: white;
   border-radius: 16px;
   padding: 20px 40px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   display: inline-block;
 }
 
@@ -200,7 +205,7 @@ export default {
   background: white;
   border-radius: 20px;
   padding: 50px 60px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
   max-width: 500px;
   width: 100%;
   animation: slideUp 0.5s ease;
