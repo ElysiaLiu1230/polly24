@@ -38,19 +38,30 @@ Data.prototype.getUILabels = function (lang) {
   return JSON.parse(labels);
 }
 
-Data.prototype.createPoll = function(pollId, lang="en") {
+Data.prototype.createPoll = function(pollId, lang="en", title="") {
   if (!this.pollExists(pollId)) {
     let poll = {};
-    poll.lang = lang;  
+    poll.lang = lang;
+    poll.title = title || pollId;
+
+    // Poll-level settings (can be extended)
+    poll.settings = {
+      // if true, questions that have timerEnabled will auto-advance when time runs out
+      autoAdvanceOnTimer: true
+    };
+
     poll.questions = [];
-    poll.answers = [];
-    poll.participants = [];
-    poll.currentQuestion = 0;              
+    poll.answers = [];          // aggregated counts per question index
+    poll.participants = [];     // [{name, answers: []}]
+    poll.currentQuestion = -1;  // -1 means lobby / not started
+    poll.started = false;
+
     this.polls[pollId] = poll;
     console.log("poll created", pollId, poll);
   }
   return this.polls[pollId];
 }
+
 
 Data.prototype.getPoll = function(pollId) {
   if (this.pollExists(pollId)) {
@@ -77,20 +88,44 @@ Data.prototype.getParticipants = function(pollId) {
 
 Data.prototype.addQuestion = function(pollId, q) {
   if (this.pollExists(pollId)) {
-    this.polls[pollId].questions.push(q);
+    // Expected shape:
+    // { q: "text", a: ["opt1",...], correct: "opt1", timerEnabled: true/false, timerSeconds: 20, hidden: false }
+    const question = {
+      q: q.q ?? "",
+      a: Array.isArray(q.a) ? q.a : [],
+      correct: q.correct ?? undefined,
+      timerEnabled: !!q.timerEnabled,
+      timerSeconds: Number.isFinite(Number(q.timerSeconds)) ? Number(q.timerSeconds) : 0,
+      hidden: !!q.hidden,
+      points: Number.isFinite(Number(q.points)) ? Number(q.points) : 100
+    };
+
+    this.polls[pollId].questions.push(question);
   }
 }
+
 
 Data.prototype.activateQuestion = function(pollId, qId = null) {
   if (this.pollExists(pollId)) {
     const poll = this.polls[pollId];
+
     if (qId !== null) {
       poll.currentQuestion = qId;
     }
-    return poll.questions[poll.currentQuestion];
+
+    // If poll not started, return empty object
+    if (poll.currentQuestion === -1) return {};
+
+    // Skip hidden questions
+    while (poll.currentQuestion < poll.questions.length && poll.questions[poll.currentQuestion]?.hidden) {
+      poll.currentQuestion += 1;
+    }
+
+    return poll.questions[poll.currentQuestion] || {};
   }
   return {}
 }
+
 
 Data.prototype.getSubmittedAnswers = function(pollId) {
   if (this.pollExists(pollId)) {
