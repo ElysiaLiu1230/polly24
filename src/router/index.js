@@ -19,11 +19,11 @@ const router = createRouter({
       name: 'LobbyView',
       component: () => import('../views/LobbyView.vue')
     },
-    {
-      path: '/host/:id',
-      name: 'HostView',
-      component: () => import('../views/HostView.vue')
-    },
+    //{
+      //path: '/host/:id',
+      //name: 'HostView',
+      //component: () => import('../views/HostView.vue')
+    //},
     {
       path: '/create/',
       name: 'CreateView',
@@ -38,7 +38,13 @@ const router = createRouter({
       path: '/final-result/:id',
       name: 'finalResult',
       component: () => import('../views/FinalResultView.vue')
+    },
+    {
+      path: '/profile',
+      name: 'ProfileView',
+      component: () => import('../views/ProfileView.vue')
     }
+
   ]
 })
 
