@@ -17,7 +17,7 @@
       </ResponsiveNav>
 
       <div class="right">
-        <button class="iconBtn avatarDesktop" aria-label="Profile">
+        <button class="iconBtn avatarDesktop" aria-label="Profile" @click="$router.push('/profile')">
           <span class="dot"></span>
         </button>
       </div>
@@ -34,7 +34,10 @@
         <a href="">{{ uiLabels.enterprise }}</a>
         <a href="">{{ uiLabels.products }}</a>
         <a href="">{{ uiLabels.career }}</a>
-        <a href="">{{ uiLabels.profile }}</a>
+        <router-link to="/profile">
+          {{ uiLabels.profile }}
+        </router-link>
+
       </ResponsiveNav>
     </div>
     <!-- 
