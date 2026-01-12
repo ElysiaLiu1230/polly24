@@ -7,8 +7,8 @@
       </div>
 
       <div class="actions">
-        <button class="btn ghost" @click="goBack">Cancel</button>
-        <button class="btn primary" @click="save">Save</button>
+        <button class="btn ghost" @click="goBack">{{ t("cancel") }}</button>
+        <button class="btn primary" @click="save">{{ t("save") }}</button>
       </div>
     </header>
 
@@ -24,26 +24,25 @@
 
         <!-- Name -->
         <div class="field">
-          <label>Name</label>
+          <label>{{ t("name") }}</label>
           <input
             v-model.trim="nickname"
-            placeholder="Enter your display name"
+            :placeholder="t('namePlaceholder')"
           />
         </div>
 
         <!-- Language -->
         <div class="field">
-          <label>Language</label>
+          <label>{{ t("language") }}</label>
           <select v-model="lang">
-            <option value="en">English</option>
-            <option value="sv">Svenska</option>
+            <option value="en">{{ t("english") }}</option>
+            <option value="sv">{{ t("swedish") }}</option>
           </select>
         </div>
 
         <!-- Info -->
         <p class="hint">
-          These settings are saved on this device and used when you join or host
-          a poll.
+          {{ t("hint") }}
         </p>
       </section>
     </main>
@@ -51,6 +50,29 @@
 </template>
 
 <script>
+const MESSAGES = {
+  en: {
+    cancel: "Cancel",
+    save: "Save",
+    name: "Name",
+    namePlaceholder: "Enter your display name",
+    language: "Language",
+    english: "English",
+    swedish: "Svenska",
+    hint: "These settings are saved on this device and used when you join or host a poll."
+  },
+  sv: {
+    cancel: "Avbryt",
+    save: "Spara",
+    name: "Namn",
+    namePlaceholder: "Ange ditt visningsnamn",
+    language: "Språk",
+    english: "English",
+    swedish: "Svenska",
+    hint: "Dessa inställningar sparas på den här enheten och används när du går med i eller skapar en omröstning."
+  }
+};
+
 export default {
   name: "ProfileView",
   data() {
@@ -61,12 +83,20 @@ export default {
   },
   computed: {
     avatarLetter() {
-      return this.nickname
-        ? this.nickname.trim()[0].toUpperCase()
-        : "?";
+      return this.nickname ? this.nickname.trim()[0].toUpperCase() : "?";
+    }
+  },
+  watch: {
+    // Make UI react instantly + keep storage consistent
+    lang(newLang) {
+      localStorage.setItem("lang", newLang);
     }
   },
   methods: {
+    t(key) {
+      const lang = this.lang in MESSAGES ? this.lang : "en";
+      return MESSAGES[lang][key] ?? MESSAGES.en[key] ?? key;
+    },
     save() {
       localStorage.setItem("nickname", this.nickname);
       localStorage.setItem("lang", this.lang);
