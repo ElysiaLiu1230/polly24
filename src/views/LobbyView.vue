@@ -65,7 +65,7 @@
               :style="{ animationDelay: `${index * 0.1}s` }"
             >
               <div class="avatar" :style="{ background: getAvatarColor(index) }">
-                {{ participant[0].toUpperCase() }}
+                {{ participant[0] }}
               </div>
               <span class="participant-name">{{ participant }}</span>
             </div>

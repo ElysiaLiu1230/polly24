@@ -6,7 +6,7 @@
       <h1 class="game-over-title">{{ uiLabels.gameOver || 'Game Over!' }}</h1>
       <div v-if="winner" class="winner-card">
         <div class="winner-avatar" :style="{ background: getAvatarColor(0) }">
-          {{ winner.name[0].toUpperCase() }}
+          {{ winner.name[0] }}
         </div>
         <div class="winner-info">
           <span class="winner-label">Winner</span>
@@ -39,7 +39,7 @@
           <!-- Participant Info -->
           <div class="participant-info">
             <div class="participant-avatar" :style="{ background: getAvatarColor(index) }">
-              {{ participant.name[0].toUpperCase() }}
+              {{ participant.name[0] }}
             </div>
             <span class="participant-name">{{ participant.name }}</span>
           </div>
