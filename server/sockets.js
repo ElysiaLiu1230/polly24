@@ -145,6 +145,23 @@ function sockets(io, socket, data) {
       console.log("Poll does not exist, creating:", pollId);
       data.createPoll(pollId);
     }
+
+    const poll = data.getPoll(pollId);
+    if (poll.started && poll.currentQuestion >= 0) {
+      const q = poll.questions[poll.currentQuestion];
+      socket.emit("questionUpdate", sanitizeQuestionForParticipant(q));
+      
+      socket.emit("pollData", {
+        started: true,
+        currentQuestion: poll.currentQuestion,
+        totalQuestions: poll.questions.length
+      });
+
+      const t = pollTimers.get(pollId);
+      if (t) {
+        socket.emit("timerUpdate", { endsAt: t.endsAt });
+      }
+    }
     
     const participantNames = data.getParticipantNames(pollId);
     console.log("Sending participants to new socket:", participantNames);
