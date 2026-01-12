@@ -73,15 +73,30 @@ Data.prototype.getPoll = function(pollId) {
 Data.prototype.participateInPoll = function(pollId, name) {
   console.log("participant will be added to", pollId, name);
   if (this.pollExists(pollId)) {
-    this.polls[pollId].participants.push({name: name, answers: []})
+
+    const existingParticipant = this.polls[pollId].participants.find(p => p.name === name);
+    
+    if (!existingParticipant) {
+      this.polls[pollId].participants.push({name: name, answers: []});
+      console.log("participant added:", name);
+    } else {
+      console.log("participant already exists:", name);
+    }
   }
 }
 
 Data.prototype.getParticipants = function(pollId) {
-  const poll = this.polls[pollId];
   console.log("participants requested for", pollId);
   if (this.pollExists(pollId)) { 
     return this.polls[pollId].participants
+  }
+  console.log("poll does not exist, returning empty array");
+  return [];
+}
+
+Data.prototype.getParticipantNames = function(pollId) {
+  if (this.pollExists(pollId)) {
+    return this.polls[pollId].participants.map(p => p.name);
   }
   return [];
 }
@@ -224,6 +239,3 @@ Data.prototype.getParticipantsWithScores = function(pollId) {
 }
 
 export { Data };
-
-
-

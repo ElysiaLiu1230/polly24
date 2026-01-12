@@ -137,10 +137,18 @@ function sockets(io, socket, data) {
   });
 
   // ---------- Rooms ----------
-  socket.on("joinPoll", function (d) {
-    socket.join(d.pollId);
-    data.participateInPoll(d.pollId, d.name);
-    io.to(d.pollId).emit("participantsUpdate", data.getParticipants(d.pollId));
+  socket.on("joinPoll", function (pollId) {
+    console.log("Socket joining poll room:", pollId);
+    socket.join(pollId);
+    
+    if (!data.pollExists(pollId)) {
+      console.log("Poll does not exist, creating:", pollId);
+      data.createPoll(pollId);
+    }
+    
+    const participantNames = data.getParticipantNames(pollId);
+    console.log("Sending participants to new socket:", participantNames);
+    socket.emit("participantsUpdate", participantNames);
   });
 
   // For host dashboards that need full question (including correct answer)
@@ -160,8 +168,19 @@ function sockets(io, socket, data) {
 
   // ---------- Lobby ----------
   socket.on("participateInPoll", function (d) {
+    console.log("participateInPoll received:", d);
+    
+    if (!data.pollExists(d.pollId)) {
+      console.log("Poll does not exist in participateInPoll, creating:", d.pollId);
+      data.createPoll(d.pollId);
+    }
+
     data.participateInPoll(d.pollId, d.name);
-    io.to(d.pollId).emit("participantsUpdate", data.getParticipants(d.pollId));
+    
+    const participantNames = data.getParticipantNames(d.pollId);
+    console.log("Broadcasting participants to room:", d.pollId, participantNames);
+    
+    io.to(d.pollId).emit("participantsUpdate", participantNames);
   });
 
   // ---------- Start / run ----------

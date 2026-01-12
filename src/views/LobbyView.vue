@@ -60,7 +60,7 @@
           <div class="participants-grid">
             <div 
               v-for="(participant, index) in participants" 
-              :key="participant"
+              :key="participant + '-' + index"
               class="participant-card"
               :style="{ animationDelay: `${index * 0.1}s` }"
             >
@@ -78,7 +78,14 @@
 
 <script>
 import io from 'socket.io-client';
-const socket = io("localhost:3000");
+
+let socket = null;
+const getSocket = () => {
+  if (!socket) {
+    socket = io("localhost:3000");
+  }
+  return socket;
+};
 
 export default {
   name: 'LobbyView',
@@ -89,22 +96,34 @@ export default {
       uiLabels: {},
       joined: false,
       lang: localStorage.getItem("lang") || "en",
-      participants: [],
-      localParticipantCount: 0
+      participants: []
     }
   },
+  
   mounted() {
     this.pollId = this.$route.params.id;
+    console.log("=== LobbyView mounted ===");
+    console.log("Poll ID from route:", this.pollId);
+
+    const socket = getSocket();
+    
+    console.log("Socket connected:", socket.connected);
+    console.log("Socket ID:", socket.id);
 
     socket.emit("joinPoll", this.pollId);
     socket.emit("getUILabels", this.lang);
+    
+    console.log("Emitted joinPoll and getUILabels");
 
     socket.on("uiLabels", this.onUILabels);
     socket.on("participantsUpdate", this.onParticipantsUpdate);
     socket.on("startPoll", this.onStartPoll);
+    
+    console.log("Event handlers registered");
   },
 
   beforeUnmount() {
+    const socket = getSocket();
     socket.off("uiLabels", this.onUILabels);
     socket.off("participantsUpdate", this.onParticipantsUpdate);
     socket.off("startPoll", this.onStartPoll);
@@ -114,19 +133,18 @@ export default {
     participateInPoll() {
       if (!this.userName.trim()) return;
 
-      console.log("Joining with name:", this.userName); // 调试用
+      console.log("=== Joining poll ===");
+      console.log("Poll ID:", this.pollId);
+      console.log("User name:", this.userName); 
 
+      const socket = getSocket();
       socket.emit("participateInPoll", {
         pollId: this.pollId,
         name: this.userName
       });
 
-      // 乐观更新
-      if (!this.participants.includes(this.userName)) {
-        this.participants = [...this.participants, this.userName];
-      }
-      this.localParticipantCount = this.participants.length;
-      
+      console.log("Emitted participateInPoll event");
+
       this.joined = true;
     },
 
@@ -135,8 +153,14 @@ export default {
     },
 
     onParticipantsUpdate(p) {
-      console.log("Participants update received:", p); // 调试用
-      this.participants = p;
+      console.log("Participants update received:", p, "Type:", typeof p, "IsArray:", Array.isArray(p)); 
+      if (Array.isArray(p)) {
+        this.participants = [...p];
+        console.log("Participants array updated:", this.participants);
+      } else {
+        console.error("Received non-array participants data:", p);
+        this.participants = [];
+      }
     },
 
     onStartPoll() {
