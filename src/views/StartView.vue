@@ -17,10 +17,11 @@
       </ResponsiveNav>
 
       <div class="right">
-        <button class="iconBtn avatarDesktop" aria-label="Profile" @click="$router.push('/profile')">
-          <span class="dot"></span>
-        </button>
+          <div class="avatar" @click="$router.push('/profile')"  style="cursor: pointer">
+            {{ avatarLetter }}
+          </div>
       </div>
+  
     </header>
 
     <!-- mobile：overlay + drawer -->
@@ -113,6 +114,7 @@
 <script>
 import ResponsiveNav from '@/components/ResponsiveNav.vue';
 import io from 'socket.io-client';
+import { TriggerOpTypes } from 'vue';
 
 const socket = io("localhost:3000");
 
@@ -123,11 +125,17 @@ export default {
   },
   data: function () {
     return {
+      nickname: localStorage.getItem("nickname"),
       uiLabels: {},
       newPollId: "",
       lang: localStorage.getItem("lang") || "en",
       hideNav: true,
       showJoinModal: false
+    }
+  },
+  computed: {
+    avatarLetter() {
+      return this.nickname ? this.nickname.trim()[0].toUpperCase() : "?";
     }
   },
   created: function () {
@@ -399,6 +407,19 @@ export default {
   background: #4f6bdc;
   display: grid;
   place-items: center;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1368ce;
+  color: white;
+  font-size: 20px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* desktop for mobile */
