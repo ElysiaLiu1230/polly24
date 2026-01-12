@@ -873,7 +873,7 @@ select {
     overflow: visible;
   }
   .right {
-    height: auto;
+    min-height: 50svh;
   }
 }
 </style>
