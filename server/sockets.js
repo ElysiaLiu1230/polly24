@@ -137,24 +137,10 @@ function sockets(io, socket, data) {
   });
 
   // ---------- Rooms ----------
-  socket.on("joinPoll", function (pollId) {
-    socket.join(pollId);
-
-    // Participant gets participant-safe updates
-    const poll = data.getPoll(pollId);
-    if (poll.started && poll.currentQuestion >= 0) {
-      socket.emit("questionUpdate", sanitizeQuestionForParticipant(poll.questions[poll.currentQuestion]));
-      socket.emit("submittedAnswersUpdate", data.getSubmittedAnswers(pollId));
-
-      // If the poll uses a timer, a participant might only join the /poll page
-      // after the host has already started the countdown. Send the current endsAt
-      // so their client can display the remaining time correctly.
-      const t = pollTimers.get(pollId);
-      socket.emit("timerUpdate", { pollId, endsAt: t?.endsAt ?? null, seconds: null });
-    }
-
-    socket.emit("pollData", data.getPoll(pollId));
-    io.to(pollId).emit("participantsUpdate", data.getParticipants(pollId));
+  socket.on("joinPoll", function (d) {
+    socket.join(d.pollId);
+    data.participateInPoll(d.pollId, d.name);
+    io.to(d.pollId).emit("participantsUpdate", data.getParticipants(d.pollId));
   });
 
   // For host dashboards that need full question (including correct answer)
