@@ -386,6 +386,7 @@ export default {
   gap: 15px;
   justify-content: center;
   flex-wrap: wrap;
+  min-height: 100px;
 }
 
 .action-btn {
@@ -487,6 +488,7 @@ export default {
 
   .action-buttons {
     flex-direction: column;
+    min-height: 45svh;
   }
 
   .action-btn {

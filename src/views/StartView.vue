@@ -430,7 +430,7 @@ export default {
     display: none;
   }
 
-  .avatarDesktop {
+  .avatar {
     display: none;
   }
 

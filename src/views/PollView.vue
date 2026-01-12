@@ -310,6 +310,7 @@ export default {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
+  min-height: 40svh;
 }
 
 .optCard {

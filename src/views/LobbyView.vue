@@ -390,6 +390,7 @@ export default {
 /* Participants Grid */
 .participants-container {
   margin-top: 30px;
+  min-height:80svh;
 }
 
 .participants-grid {
