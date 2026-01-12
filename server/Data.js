@@ -192,21 +192,24 @@ Data.prototype.setCorrectAnswer = function(pollId, questionIndex, correctAnswer)
   }
 }
 
-Data.prototype.calculateParticipantScore = function(pollId, participant) {
+Data.prototype.calculateParticipantScore = function (pollId, participant) {
   if (!this.pollExists(pollId)) return 0;
-  
+
   const poll = this.polls[pollId];
   let score = 0;
-  
+
   participant.answers.forEach((answer, questionIndex) => {
     const question = poll.questions[questionIndex];
-    if (question && question.correct === answer) {
-      score += 100; 
+    if (!question) return;
+
+    const points = Number.isFinite(Number(question.points)) ? Number(question.points) : 0;
+
+    if (question.correct === answer) {
+      score += points;
     }
   });
-  
-  return score;
-}
+    return score;
+};
 
 Data.prototype.getParticipantsWithScores = function(pollId) {
   if (!this.pollExists(pollId)) return [];

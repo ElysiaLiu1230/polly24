@@ -200,7 +200,7 @@ function newLocalQuestion() {
     localId: crypto.randomUUID?.() || String(Date.now() + Math.random()),
     text: "",
     options: ["", ""],
-    correctIndex: null,
+    correctIndex: 0,
     timerEnabled: true,
     timerSeconds: 20,
     points: 1
