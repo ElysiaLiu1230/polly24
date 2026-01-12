@@ -133,6 +133,7 @@ export default {
     participateInPoll() {
       if (!this.userName.trim()) return;
 
+      localStorage.setItem("participantName", this.userName.trim());
       console.log("=== Joining poll ===");
       console.log("Poll ID:", this.pollId);
       console.log("User name:", this.userName); 
