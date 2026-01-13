@@ -2,8 +2,8 @@
   <div class="player-page">
     <header class="top">
       <div class="left">
-        <div class="pill">PIN: <b>{{ pollId }}</b></div>
-        <div class="pill">You: <b>{{ participantName }}</b></div>
+        <div class="pill">{{ uiLabels.pin }}:<b>{{ pollId }}</b></div>
+        <div class="pill">{{ uiLabels.you }}:<b>{{ participantName }}</b></div>
 
         <div v-if="progressText" class="pill progress">
           {{ progressText }}
@@ -11,7 +11,7 @@
       </div>
 
       <div v-if="question.timerEnabled" class="timer">
-        Time left: <b>{{ timeLeft }}</b>s
+        {{ uiLabels.timeLeft }}: <b>{{ timeLeft }}</b>{{ uiLabels.secondsShort }}
       </div>
     </header>
 
@@ -34,23 +34,23 @@
           <div class="optTop">
             <div class="optTitle">
               <span class="optLetter">{{ optionLetter(i) }}</span>
-              <span class="optName">Option {{ optionLetter(i) }}</span>
+              <span class="optName">{{ uiLabels.option }} {{ optionLetter(i) }}</span>
             </div>
 
-            <span class="pickBtn" :class="{ active: selectedIndex === i }" title="Selected">
+            <span class="pickBtn" :class="{ active: selectedIndex === i }" title="uiLabels.selected">
               ✓
             </span>
           </div>
 
           <div class="optText">{{ opt }}</div>
 
-          <div v-if="showCorrect && correctIndex === i" class="correctTag">Correct</div>
+          <div v-if="showCorrect && correctIndex === i" class="correctTag">{{ uiLabels.correct }}</div>
         </button>
       </div>
 
       <div class="actions">
         <button class="btn primary" @click="submit" :disabled="selectedIndex === null || locked">
-          Submit
+          {{ uiLabels.submit }}
         </button>
       </div>
 
@@ -60,8 +60,8 @@
     </main>
 
     <main v-else class="card">
-      <h2>Waiting for the poll to start…</h2>
-      <p class="muted">Stay on this page — the host will start soon.</p>
+      <h2>{{ uiLabels.waitingForPollStart }}</h2>
+      <p class="muted">{{ uiLabels.stayOnThisPage }}</p>
     </main>
   </div>
 </template>
@@ -74,6 +74,8 @@ export default {
   name: "PollView",
   data() {
     return {
+      lang: localStorage.getItem("lang") || "en",
+      uiLabels: {},
       pollId: "",
       participantName: localStorage.getItem("participantName") || "Player",
 
@@ -92,6 +94,10 @@ export default {
       resultCorrectText: null,
       resultIsCorrect: null
     };
+  },
+  created() {
+  socket.on("uiLabels", labels => (this.uiLabels = labels || {}));
+  socket.emit("getUILabels", this.lang);
   },
   computed: {
     correctIndex() {
@@ -158,11 +164,13 @@ export default {
       this.resultCorrectText = correct || null;
 
       if (isCorrect) {
-        this.feedback = { ok: true, text: "✅ Correct!" };
+        this.feedback = { ok: true, text: this.uiLabels.correctMsg || "✅ Correct!" };
       } else {
         this.feedback = {
           ok: false,
-          text: correct ? `❌ Wrong. Correct answer: ${correct}` : "❌ Wrong."
+          text: correct
+        ? `❌ ${this.uiLabels.wrongMsg || "Wrong."} ${this.uiLabels.correctAnswerIs || "Correct answer:"}: ${correct}`
+        : `❌ ${this.uiLabels.wrongMsg || "Wrong."}`
         };
       }
     });
@@ -178,6 +186,7 @@ export default {
     socket.off("timerUpdate");
     socket.off("answerResult");
     socket.off("pollEnded");
+    socket.off("uiLabels");
     if (this.tick) clearInterval(this.tick);
   },
   methods: {
@@ -231,7 +240,7 @@ export default {
               this.submit();
             } else {
               this.locked = true;
-              this.feedback = { ok: false, text: "⏰ Time’s up! No answer submitted." };
+              this.feedback = { ok: false, text: this.uiLabels.timeUpNoAnswer || "Time's up! No answer submitted." };
             }
           }
         }

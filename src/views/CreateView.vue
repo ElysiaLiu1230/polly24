@@ -7,7 +7,7 @@
 
       <div class="actions">
         <button class="btn primary" @click="startPoll" :disabled="!canRun">
-          Run poll
+          {{ uiLabels.runPoll || "Run poll" }}
         </button>
       </div>
     </header>
@@ -15,8 +15,8 @@
     <main class="layout">
       <aside class="left">
         <div class="leftHeader">
-          <div class="leftTitle">Questions</div>
-          <div class="leftHint">{{ questions.length }} total</div>
+          <div class="leftTitle">{{ uiLabels.questions || "Questions" }}</div>
+          <div class="leftHint">{{ questions.length }} {{ uiLabels.total || "total" }}</div>
         </div>
 
         <div class="qList">
@@ -29,15 +29,19 @@
           >
             <div class="qcard-top">
               <div class="qcard-title">
-                Question {{ i + 1 }}
-                <span v-if="showValidation && !isQuestionValid(q)" class="warnDot" title="Incomplete"></span>
+                {{ uiLabels.question || "Question" }} {{ i + 1 }}
+                <span
+                  v-if="showValidation && !isQuestionValid(q)"
+                  class="warnDot"
+                  :title="uiLabels.incomplete || 'Incomplete'"
+                ></span>
               </div>
 
               <div class="qcard-actions">
-                <button class="miniBtn" title="Copy" @click.stop="copyQuestion(i)">⧉</button>
+                <button class="miniBtn" :title="uiLabels.copy || 'Copy'" @click.stop="copyQuestion(i)">⧉</button>
                 <button
                   class="miniBtn"
-                  title="Delete"
+                  :title="uiLabels.delete || 'Delete'"
                   @click.stop="deleteQuestion(i)"
                   :disabled="questions.length === 1"
                 >
@@ -48,17 +52,17 @@
 
             <div class="qcard-preview">
               <div class="previewMeta">
-                <span>{{ countNonEmptyOptions(q) }} options</span>
+                <span>{{ countNonEmptyOptions(q) }} {{ uiLabels.optionsLower || "options" }}</span>
                 <span v-if="getEffectiveCorrectIndex(q) !== null">
-                  Correct: {{ optionLetter(getEffectiveCorrectIndex(q)) }}
+                  {{ uiLabels.correct || "Correct" }}: {{ optionLetter(getEffectiveCorrectIndex(q)) }}
                 </span>
-                <span v-else>Correct: —</span>
+                <span v-else>{{ uiLabels.correct || "Correct" }}: —</span>
               </div>
             </div>
           </div>
         </div>
 
-        <button class="addQ" @click="addLocalQuestion">＋ Add</button>
+        <button class="addQ" @click="addLocalQuestion">＋ {{ uiLabels.add || "Add" }}</button>
       </aside>
 
       <section class="center">
@@ -66,10 +70,10 @@
           <div class="contentCol">
             <div class="sectionTitleRow">
               <div class="sectionTitle">
-                Question <span class="req">*</span>
+                {{ uiLabels.question || "Question" }} <span class="req">*</span>
               </div>
               <div v-if="showValidation && !currentQuestionOk" class="hint">
-                Please enter the question text.
+                {{ uiLabels.errQuestionText || "Please enter the question text." }}
               </div>
             </div>
 
@@ -77,31 +81,31 @@
               class="questionInput"
               type="text"
               v-model="current.text"
-              placeholder="Enter your question"
+              :placeholder="uiLabels.phEnterQuestion || 'Enter your question'"
             />
 
             <div class="sectionTitleRow optionsHeader">
               <div class="sectionTitle">
-                Options <span class="req">*</span>
-                <span class="miniMuted">(at least 2 required)</span>
+                {{ uiLabels.options || "Options" }} <span class="req">*</span>
+                <span class="miniMuted">({{ uiLabels.atLeast2 || "at least 2 required" }})</span>
               </div>
 
               <div class="optTools">
                 <button class="toolBtn" @click="addOption" :disabled="visibleOptionCount >= 4">
-                  + Add option
+                  + {{ uiLabels.addOption || "Add option" }}
                 </button>
                 <button class="toolBtn ghost" @click="removeOption" :disabled="visibleOptionCount <= 2">
-                  − Remove option
+                  − {{ uiLabels.removeOption || "Remove option" }}
                 </button>
               </div>
             </div>
 
             <div v-if="showValidation && !currentOptionsOk" class="hint">
-              Please fill at least two options.
+              {{ uiLabels.errTwoOptions || "Please fill at least two options." }}
             </div>
 
             <div v-if="showValidation && !currentCorrectOk" class="hint">
-              Please set the correct answer (click ✓ on an option).
+              {{ uiLabels.errSetCorrect || "Please set the correct answer (click ✓ on an option)." }}
             </div>
 
             <div class="optionsGrid">
@@ -114,7 +118,9 @@
                 <div class="optTop">
                   <div class="optTitle">
                     <span class="optLetter">{{ optionLetter(i) }}</span>
-                    <span class="optName">Option {{ optionLetter(i) }}</span>
+                    <span class="optName">
+                      {{ uiLabels.option || "Option" }} {{ optionLetter(i) }}
+                    </span>
                   </div>
 
                   <button
@@ -122,7 +128,7 @@
                     :class="{ active: current.correctIndex === i }"
                     type="button"
                     @click="setCorrect(i)"
-                    title="Set as correct"
+                    :title="uiLabels.setAsCorrect || 'Set as correct'"
                   >
                     ✓
                   </button>
@@ -131,17 +137,17 @@
                 <input
                   class="optInput"
                   v-model="current.options[i]"
-                  :placeholder="`Type option ${optionLetter(i)}`"
+                  :placeholder="`${uiLabels.phTypeOption || 'Type option'} ${optionLetter(i)}`"
                 />
 
                 <div v-if="current.correctIndex === i" class="correctTag">
-                  Correct
+                  {{ uiLabels.correct || "Correct" }}
                 </div>
               </div>
             </div>
 
             <div v-if="showValidation && !canRun" class="footerWarn">
-              Please complete required fields (*) before running the poll.
+              {{ uiLabels.errCompleteRequired || "Please complete required fields (*) before running the poll." }}
             </div>
           </div>
         </div>
@@ -149,11 +155,11 @@
 
       <aside class="right">
         <div class="panelTitle">
-          Question Setting <span class="gear">⚙</span>
+          {{ uiLabels.questionSetting || "Question Setting" }} <span class="gear">⚙</span>
         </div>
 
         <div class="settingRow">
-          <div class="settingName">Add Timer</div>
+          <div class="settingName">{{ uiLabels.addTimer || "Add Timer" }}</div>
           <label class="switch">
             <input type="checkbox" v-model="current.timerEnabled" />
             <span class="slider"></span>
@@ -161,22 +167,22 @@
         </div>
 
         <div class="settingRow">
-          <div class="settingName">Timer</div>
+          <div class="settingName">{{ uiLabels.timer || "Timer" }}</div>
           <select v-model.number="current.timerSeconds" :disabled="!current.timerEnabled">
-            <option :value="10">10 seconds</option>
-            <option :value="20">20 seconds</option>
-            <option :value="30">30 seconds</option>
-            <option :value="60">60 seconds</option>
+            <option :value="10">10 {{ uiLabels.seconds || "seconds" }}</option>
+            <option :value="20">20 {{ uiLabels.seconds || "seconds" }}</option>
+            <option :value="30">30 {{ uiLabels.seconds || "seconds" }}</option>
+            <option :value="60">60 {{ uiLabels.seconds || "seconds" }}</option>
           </select>
         </div>
 
         <div class="settingRow">
-          <div class="settingName">Award Points</div>
+          <div class="settingName">{{ uiLabels.awardPoints || "Award Points" }}</div>
           <select v-model.number="current.points">
-            <option :value="0">0 point</option>
-            <option :value="1">1 point</option>
-            <option :value="2">2 points</option>
-            <option :value="5">5 points</option>
+            <option :value="0">0 {{ uiLabels.point || "point" }}</option>
+            <option :value="1">1 {{ uiLabels.point || "point" }}</option>
+            <option :value="2">2 {{ uiLabels.points || "points" }}</option>
+            <option :value="5">5 {{ uiLabels.points || "points" }}</option>
           </select>
         </div>
       </aside>
@@ -212,6 +218,7 @@ export default {
   data() {
     return {
       lang: localStorage.getItem("lang") || "en",
+      uiLabels: {},
       pollId: "",
       title: "",
       questions: [newLocalQuestion()],
@@ -219,6 +226,17 @@ export default {
       showValidation: false
     };
   },
+  created() {
+  socket.on("uiLabels", labels => {
+    this.uiLabels = labels || {};
+  });
+  socket.emit("getUILabels", this.lang);
+  },
+
+  beforeUnmount() {
+    socket.off("uiLabels");
+  },
+  
   computed: {
     current() {
       return this.questions[this.selectedIndex];

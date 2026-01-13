@@ -2,8 +2,8 @@
   <div class="host-page">
     <header class="host-header">
       <div class="left">
-        <h1 class="brand">Host</h1>
-        <div class="pin">PIN: <b>{{ pollId }}</b></div>
+        <h1 class="brand">{{ uiLabels.host || "Host" }}</h1>
+        <div class="pin">{{ uiLabels.pin || "PIN" }}: <b>{{ pollId }}</b></div>
       </div>
       <div class="right">
         <button
@@ -12,19 +12,20 @@
           :disabled="participants.length === 0"
           @click="start"
         >
-          Start
+          {{ uiLabels.start || "Start" }}
         </button>
         <button v-else class="btn ghost" @click="endPoll">
-          End poll
+          {{ uiLabels.endPoll || "End poll" }}
         </button>
       </div>
     </header>
 
     <main class="grid">
       <section class="card">
-        <h2>Lobby</h2>
+        <h2>{{ uiLabels.lobby || "Lobby" }}</h2>
         <p class="muted">
-          Players joined: <b>{{ participants.length }}</b>
+          {{ uiLabels.playersJoined || "Players joined" }}:
+          <b>{{ participants.length }}</b>
         </p>
 
         <ul v-if="participants.length" class="playerList">
@@ -35,7 +36,7 @@
         </ul>
 
         <div v-else class="muted" style="margin-top:10px;">
-          No players yet
+          {{ uiLabels.noPlayersYet || "No players yet" }}
         </div>
       </section>
 
@@ -43,7 +44,8 @@
         <template v-if="poll.started && question.q">
           <div class="qmeta">
             <span class="muted">
-              Question <b>{{ poll.currentQuestion + 1 }}</b> / {{ poll.totalQuestions }}
+              {{ uiLabels.question || "Question" }}
+              <b>{{ poll.currentQuestion + 1 }}</b> / {{ poll.totalQuestions }}
             </span>
           </div>
 
@@ -51,9 +53,9 @@
             <h2 class="qtitle">{{ question.q }}</h2>
 
             <div v-if="question.timerEnabled" class="timer">
-              Time left: <b>{{ timeLeft }}</b>s
+              {{ uiLabels.timeLeft || "Time left" }}: <b>{{ timeLeft }}</b>{{ uiLabels.secondsShort || "s" }}
             </div>
-            <div v-else class="muted">No timer</div>
+            <div v-else class="muted">{{ uiLabels.noTimer || "No timer" }}</div>
           </div>
 
           <div class="options">
@@ -70,19 +72,21 @@
 
           <div class="actions">
             <button class="btn primary" v-if="!question.timerEnabled" @click="next">
-              Next →
+               {{ uiLabels.next || "Next" }} →
             </button>
           </div>
         </template>
 
         <template v-else>
-          <h2>Waiting to start…</h2>
-          <p class="muted">When you click <b>Start</b>, everyone will move from lobby into the poll.</p>
+          <h2>{{ uiLabels.waitingToStart || "Waiting to start…" }}</h2>
+          <p class="muted">{{ uiLabels.whenClickStart || "When you click" }}
+          <b>{{ uiLabels.start || "Start" }}</b>,
+          {{ uiLabels.everyoneMoveFromLobby || "everyone will move from lobby into the poll." }}</p>
         </template>
       </section>
 
       <section class="card">
-        <h2>Leaderboard</h2>
+        <h2>{{ uiLabels.leaderboard || "Leaderboard" }}</h2>
         <ol class="leaderboard">
           <li v-for="p in leaderboard" :key="p.name" class="row">
             <span>{{ p.name }}</span>
@@ -105,6 +109,8 @@ export default {
   components: { BarsComponent },
   data() {
     return {
+      lang: localStorage.getItem("lang") || "en",
+      uiLabels: {},
       pollId: "",
       poll: { started: false, currentQuestion: -1, totalQuestions: 0 },
       participants: [],
@@ -116,6 +122,11 @@ export default {
       leaderboard: []
     };
   },
+  created() {
+  socket.on("uiLabels", labels => (this.uiLabels = labels || {}));
+  socket.emit("getUILabels", this.lang);
+  },
+
   mounted() {
     this.pollId = this.$route.params.id;
 
@@ -154,9 +165,17 @@ export default {
     socket.on("pollEnded", () => {
       this.$router.push("/final-result/" + this.pollId);
     });
+
+    socket.on("pollAdvance", ({ currentQuestion, pollId }) => {
+      if (pollId !== this.pollId) return;
+      this.poll.currentQuestion = currentQuestion;
+    });
+
   },
   beforeUnmount() {
     socket.disconnect();
+    socket.off("uiLabels");
+    socket.off("pollAdvance");
     if (this.tick) clearInterval(this.tick);
   },
   methods: {
